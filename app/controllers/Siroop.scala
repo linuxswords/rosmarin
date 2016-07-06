@@ -1,12 +1,19 @@
 package controllers
 
+import java.io.File
+import java.util.UUID
 import javax.inject._
+
+import com.sksamuel.elastic4s.ElasticDsl._
+import com.sksamuel.elastic4s.{ElasticClient, ElasticsearchClientUri, RichSearchResponse}
 import models.elasticsearch.BulkInsert
-import play.api._
+import org.elasticsearch.common.settings.Settings
 import play.api.libs.json.Json
 import play.api.mvc._
 
-import scala.collection.immutable
+import scala.collection.JavaConversions._
+import scala.concurrent.{ExecutionContext, Future}
+
 
 /**
   * Created by knm on 05.07.16.
@@ -14,7 +21,8 @@ import scala.collection.immutable
 @Singleton
 class Siroop  @Inject() extends Controller {
 
-
+  val client = ElasticClient.transport(ElasticsearchClientUri("localhost", 9300))
+  
   def createJson() = Action {
 
     val products = getProducts
@@ -41,6 +49,20 @@ class Siroop  @Inject() extends Controller {
     Ok(bulkInsert.bulkExport.mkString("\n"))
 
 
+  }
+
+  def siroop(index: String, typez: String,  term: String) = Action {
+
+    val response = client.execute{ search in index / typez query term }
+    val products = extractProducts(response)
+    Ok(products.toString)
+  }
+
+  def extractProducts(searchResponse: Future[RichSearchResponse])(implicit executor: ExecutionContext) =
+    extractTsFromSearchResponse(models.Product.apply)(searchResponse)
+
+  def extractTsFromSearchResponse[T](applyFunc: Map[String, AnyRef] => T)(searchResponse: Future[RichSearchResponse])(implicit executor: ExecutionContext): Future[Seq[T]] = {
+    searchResponse.map(_.getHits.hits().map(_.sourceAsMap.toMap).map(applyFunc))
   }
 
 

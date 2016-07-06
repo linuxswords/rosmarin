@@ -3,7 +3,8 @@
 # ~~~~
 
 GET  /createJson                    controllers.Siroop.createJson
-GET  /createBulk/:index/:typez         controllers.Siroop.createBulk(index: String, typez: String)
+GET  /createBulk/:index/:typez      controllers.Siroop.createBulk(index: String, typez: String)
+GET  /search/:index/:typez/:term    controllers.Siroop.siroop(index: String, typez: String, term: String)
 
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index
