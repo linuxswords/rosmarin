@@ -1,0 +1,91 @@
+{
+    "mappings": {
+        "product": {
+            "properties": {
+                "availability": {
+                    "type": "string"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "categoryid": {
+                    "type": "string"
+                },
+                "cnetid": {
+                    "type": "string"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "deliverymode": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "ean": {
+                    "type": "string"
+                },
+                "employeediscount": {
+                    "type": "string"
+                },
+                "features": {
+                    "properties": {
+                        "label": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "type": "nested"
+                },
+                "imageurl": {
+                    "type": "string"
+                },
+                "location": {
+                    "type": "string"
+                },
+                "manufacturer": {
+                    "type": "string"
+                },
+                "manufactureraid": {
+                    "type": "string"
+                },
+                "maxorderquantity": {
+                    "type": "string"
+                },
+                "merchant": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "float"
+                },
+                "shortdescription": {
+                    "type": "string"
+                },
+                "stock": {
+                    "type": "float"
+                },
+                "vat": {
+                    "type": "string"
+                },
+                "warranty": {
+                    "type": "float"
+                },
+                "weight": {
+                    "type": "float"
+                },
+                "weightunit": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
