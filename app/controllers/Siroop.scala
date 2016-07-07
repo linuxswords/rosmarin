@@ -10,7 +10,7 @@ import models.elasticsearch.BulkInsert
 import org.elasticsearch.common.settings.Settings
 import play.api.libs.json.Json
 import play.api.mvc._
-
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.collection.JavaConversions._
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -22,7 +22,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class Siroop  @Inject() extends Controller {
 
   val client = ElasticClient.transport(ElasticsearchClientUri("localhost", 9300))
-  
+
   def createJson() = Action {
 
     val products = getProducts
@@ -36,7 +36,7 @@ class Siroop  @Inject() extends Controller {
     val xml = scala.xml.XML.load("/home/knm/projects/siroop-el/feed.xml")
     val productsAsXml = xml \\ "product"
 
-    val products = productsAsXml map models.Product.convertXmlToJson
+    val products = productsAsXml map models.Product.convertFromXml
     products
   }
 
@@ -54,12 +54,13 @@ class Siroop  @Inject() extends Controller {
   def siroop(index: String, typez: String,  term: String) = Action {
 
     val response = client.execute{ search in index / typez query term }
-    val products = extractProducts(response)
-    Ok(products.toString)
+    val products = extractProducts(response).await
+//        Ok(Json.toJson(products)) // for a REST API
+    Ok(views.html.productResults(products))
   }
 
   def extractProducts(searchResponse: Future[RichSearchResponse])(implicit executor: ExecutionContext) =
-    extractTsFromSearchResponse(models.Product.apply)(searchResponse)
+    extractTsFromSearchResponse(models.Product.mapApply)(searchResponse)
 
   def extractTsFromSearchResponse[T](applyFunc: Map[String, AnyRef] => T)(searchResponse: Future[RichSearchResponse])(implicit executor: ExecutionContext): Future[Seq[T]] = {
     searchResponse.map(_.getHits.hits().map(_.sourceAsMap.toMap).map(applyFunc))

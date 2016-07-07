@@ -1,0 +1,38 @@
+@(products: Seq[models.Product])
+
+@import models.Feature.convert
+<style>
+    .name{
+    font-weight: bold;
+    }
+</style>
+    @products.map { product =>
+      <dl>
+          <dt class="name">@product.name</dt>
+          <dd>@product.shortdescription</dd>
+
+          <dt>ean</dt>
+          <dd>@product.ean</dd>
+
+          <dt>Kategorie</dt>
+          <dd>@product.category (@product.categoryid)</dd>
+
+          <dt>Bewegungsdaten</dt>
+          <dd>@product.price @product.currency, @product.availability</dd>
+          <dd>@product.deliverymode</dd>
+
+          <ul>
+              @product.feature.map { feature =>
+                @if(!feature.label.isEmpty && !feature.value.isEmpty ){
+                    <li>@feature.label : @feature.value </li>
+                }
+              }
+          </ul>
+
+          <dt>Hersteller</dt>
+          <dd>@product.manufacturer</dd>
+          <dd>@product.manufactureraid</dd>
+
+
+      </dl>
+    }
