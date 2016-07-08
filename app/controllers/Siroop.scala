@@ -55,8 +55,8 @@ class Siroop  @Inject() extends Controller {
 
     val response = client.execute{ search in index / typez query term }
     val products = extractProducts(response).await
-//        Ok(Json.toJson(products)) // for a REST API
-    Ok(views.html.productResults(products))
+        Ok(Json.toJson(products)) // for a REST API
+//    Ok(views.html.productResults(products))
   }
 
   def extractProducts(searchResponse: Future[RichSearchResponse])(implicit executor: ExecutionContext) =
